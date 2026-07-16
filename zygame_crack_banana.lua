@@ -1,11 +1,11 @@
--- // Tải thư viện Venyx UI
-local Venyx = loadstring(game:HttpGet("https://raw.githubusercontent.com/Stefanuk12/Venyx-UI-Library/main/source.lua"))()
+-- // Tải thư viện Fluent UI
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- // CẤU HÌNH
 local CORRECT_KEY = "AE_ZYGAME_CRACK"
-local ToggleKey = Enum.KeyCode.RightControl -- Phím tắt để ẩn/hiện menu
+local ToggleKey = Enum.KeyCode.RightControl
 
--- // 1. TẠO GIAO DIỆN NHẬP KEY
+-- // 1. KHỞI TẠO GIAO DIỆN NHẬP KEY
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Player = Players.LocalPlayer
@@ -20,13 +20,6 @@ MainFrame.Position = UDim2.new(0.5, -160, 0.5, -90)
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.BorderSizePixel = 0
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
-
-local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "BANANA CAT HUB - KEY"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundTransparency = 1
-Title.Font = Enum.Font.GothamBold
 
 local InputBox = Instance.new("TextBox", MainFrame)
 InputBox.Size = UDim2.new(0.8, 0, 0, 40)
@@ -45,41 +38,51 @@ CheckBtn.BackgroundColor3 = Color3.fromRGB(0, 160, 255)
 CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", CheckBtn).CornerRadius = UDim.new(0, 6)
 
--- // 2. LOGIC KHỞI TẠO HUB SAU KHI NHẬP ĐÚNG KEY
-local function StartHub()
-    local UI = Venyx.new("BANANA CAT HUB")
-    local Page = UI:addPage("Farm", 5012544693)
-    local Section = Page:addSection("Chức năng chính")
+-- // 2. LOGIC HUB CHÍNH
+local function StartFluentHub()
+    local Window = Fluent:CreateWindow({
+        Title = "BANANA CAT HUB",
+        SubTitle = "v1.0",
+        TabWidth = 160,
+        Size = UDim2.fromOffset(580, 460),
+        Acrylic = true,
+        Theme = "Dark"
+    })
 
-    Section:addToggle("Tự động Cày Cấp", false, function(state)
-        print("Auto Farm: ", state)
-    end)
+    local Tabs = {
+        Main = Window:AddTab({ Title = "Farm", Icon = "rbxassetid://4483345998" })
+    }
 
-    Section:addToggle("Tự động Factory Raid", false, function(state)
-        print("Auto Raid: ", state)
-    end)
+    Tabs.Main:AddToggle("AutoFarm", {Title = "Tự động Cày Cấp", Default = false, Callback = function(Value)
+        print("Auto Farm: ", Value)
+    end})
 
-    -- // Logic Bật/Tắt Menu bằng phím tắt
-    local menuVisible = true
+    Tabs.Main:AddToggle("AutoRaid", {Title = "Tự động Factory Raid", Default = false, Callback = function(Value)
+        print("Auto Raid: ", Value)
+    end})
+
+    -- // Logic phím tắt ẩn/hiện menu
+    local isVisible = true
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == ToggleKey then
-            menuVisible = not menuVisible
-            UI:setVisible(menuVisible)
+            isVisible = not isVisible
+            Window:SetVisible(isVisible)
+            Fluent:Notify({Title = "Menu", Content = isVisible and "Đã hiện Menu" or "Đã ẩn Menu", Duration = 2})
         end
     end)
     
-    UI:SelectPage(UI.pages[1], true)
+    Fluent:Notify({Title = "Thành công", Content = "Banana Cat Hub đã sẵn sàng!", Duration = 5})
 end
 
--- // Sự kiện nhấn nút xác nhận
+-- // Sự kiện xử lý nút xác nhận Key
 CheckBtn.MouseButton1Click:Connect(function()
     if InputBox.Text == CORRECT_KEY then
         KeyGui:Destroy()
-        StartHub()
+        StartFluentHub()
     else
         InputBox.Text = "SAI KEY!"
-        wait(1)
+        wait(1.5)
         InputBox.Text = ""
     end
 end)
