@@ -2,7 +2,7 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- // CẤU HÌNH
-local CORRECT_KEY = "AE_ZYGAME_CRACK"
+local CORRECT_KEY = "aezygame"
 local ToggleKey = Enum.KeyCode.RightControl
 
 -- // 1. KHỞI TẠO GIAO DIỆN NHẬP KEY
@@ -97,3 +97,63 @@ CheckBtn.MouseButton1Click:Connect(function()
         InputBox.Text = ""
     end
 end)
+Fluent:Notify({
+    Title = "Thông báo",
+    Content = "Key hợp lệ, hệ thống đã được khởi tạo.",
+    SubContent = "Banana Cat Hub v1.0", -- Dòng phụ nhỏ bên dưới
+    Duration = 5
+})
+end
+end>)
+
+-- // TẠO NÚT NỔI KÉO THẢ ĐỘC LẬP
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local FloatingGui = Instance.new("ScreenGui", PlayerGui)
+FloatingGui.Name = "FloatingMenuGui"
+FloatingGui.ResetOnSpawn = false -- Không mất nút khi hồi sinh
+
+local OpenBtn = Instance.new("TextButton", FloatingGui)
+OpenBtn.Name = "OpenButton"
+OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+OpenBtn.Position = UDim2.new(0, 20, 0.5, -25)
+OpenBtn.Text = "MENU"
+OpenBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenBtn.Font = Enum.Font.GothamBold
+OpenBtn.TextSize = 12
+OpenBtn.Active = true
+OpenBtn.Draggable = true -- Cho phép kéo thả
+Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 10)
+
+-- // Logic kết nối với Menu của bạn (Thay 'Window' bằng biến menu của bạn)
+OpenBtn.MouseButton1Click:Connect(function()
+    -- Ví dụ: Window:SetVisible(not Window.Visible)
+    print("Nút nổi được nhấn!")
+end)
+local startTime = os.time() -- Lưu lại thời điểm nhập Key thành công
+local EXPIRATION_TIME = 120 -- 120 giây = 2 phút
+
+-- Logic kiểm tra trong quá trình sử dụng
+local function checkKeyExpiration()
+    local currentTime = os.time()
+    if (currentTime - startTime) > EXPIRATION_TIME then
+        return false -- Key đã hết hạn
+    end
+    return true -- Key vẫn còn hiệu lực
+end
+
+-- Sử dụng trong vòng lặp hoặc khi nhấn nút tính năng
+if checkKeyExpiration() then
+    -- Cho phép sử dụng tính năng
+else
+    -- Khóa tính năng và yêu cầu nhập lại Key
+    Fluent:Notify({
+        Title = "Thông báo",
+        Content = "Key của bạn đã hết hạn, vui lòng nhập lại!",
+        Duration = 5
+    })
+    -- [Code để mở lại bảng nhập Key]
+end
