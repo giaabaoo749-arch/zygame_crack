@@ -25,7 +25,6 @@ local InputBox = Instance.new("TextBox", MainFrame)
 InputBox.Size = UDim2.new(0.8, 0, 0, 40)
 InputBox.Position = UDim2.new(0.1, 0, 0.3, 0)
 InputBox.PlaceholderText = "Nhập Key tại đây..."
-InputBox.Text = ""
 InputBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 InputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", InputBox).CornerRadius = UDim.new(0, 6)
@@ -57,25 +56,37 @@ local function StartFluentHub()
         print("Auto Farm: ", Value)
     end})
 
-    Tabs.Main:AddToggle("AutoRaid", {Title = "Tự động Factory Raid", Default = false, Callback = function(Value)
-        print("Auto Raid: ", Value)
-    end})
+    -- // Nút nổi (Floating Button) để bật tắt Menu
+    local FloatingGui = Instance.new("ScreenGui", PlayerGui)
+    local OpenBtn = Instance.new("TextButton", FloatingGui)
+    OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+    OpenBtn.Position = UDim2.new(0, 20, 0.5, -25)
+    OpenBtn.Text = "MENU"
+    OpenBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    OpenBtn.Draggable = true -- Cho phép kéo thả nút
+    Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 10)
 
-    -- // Logic phím tắt ẩn/hiện menu
     local isVisible = true
+    local function toggleMenu()
+        isVisible = not isVisible
+        Window:SetVisible(isVisible)
+    end
+
+    OpenBtn.MouseButton1Click:Connect(toggleMenu)
+
+    -- // Logic phím tắt
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == ToggleKey then
-            isVisible = not isVisible
-            Window:SetVisible(isVisible)
-            Fluent:Notify({Title = "Menu", Content = isVisible and "Đã hiện Menu" or "Đã ẩn Menu", Duration = 2})
+            toggleMenu()
         end
     end)
     
-    Fluent:Notify({Title = "Thành công", Content = "Banana Cat Hub đã sẵn sàng!", Duration = 5})
+    Fluent:Notify({Title = "Thành công", Content = "Đã tải Banana Cat Hub!", Duration = 5})
 end
 
--- // Sự kiện xử lý nút xác nhận Key
+-- // Xử lý xác nhận Key
 CheckBtn.MouseButton1Click:Connect(function()
     if InputBox.Text == CORRECT_KEY then
         KeyGui:Destroy()
